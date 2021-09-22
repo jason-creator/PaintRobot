@@ -1,0 +1,45 @@
+<?xml version='1.0'?>
+<sdf version='1.6'>
+    <model name="poineer">
+        <include>
+            <uri>model://gtrobot_base</uri>
+            <name>gtrobot_base</name>
+            <pose>0 0 0 0 0 0</pose>
+            <plugin name='ros_control_poineer' filename='libgazebo_ros_control.so'>
+                <robotSimType>ppr_gazebo/DefaultRobotHWSimV2</robotSimType>
+                <legacyModeNS>1</legacyModeNS>
+                <robotNamespace>/gtrobot_base</robotNamespace>
+            </plugin>
+            <static>0</static>
+        </include>
+
+        <!-- 0.089159 -->
+        <include>
+            <uri>model://gtrobot_arm</uri>
+            <name>gtrobot_arm</name>
+            <pose>0 -0.531 1.2368 1.570796327 -1.570796327 0</pose>
+            <static>0</static>
+            <plugin name='ros_control_arm' filename='libgazebo_ros_control.so'>
+                <robotSimType>ppr_gazebo/DefaultRobotHWSimV2</robotSimType>
+                <legacyModeNS>1</legacyModeNS>
+                <robotNamespace>/gtrobot_arm</robotNamespace>
+            </plugin>
+        </include>
+        <joint name='ur_base_joint' type='fixed'>
+            <parent>gtrobot_base::rotate_axis_link</parent>
+            <child>gtrobot_arm::arm_base_link</child>
+        </joint>
+
+        <include>
+            <uri>model://parabot</uri>
+            <name>parabot</name>
+            <pose>0.714258888 -0.525509 0.795292888 0 -0.713259 3.141592654</pose>
+        </include>
+        <joint name='ur_parabot' type='fixed'>
+            <parent>gtrobot_arm::arm_wrist_3_link</parent>
+            <child>parabot::lower_platform</child>
+        </joint>
+
+    </model>
+
+</sdf>

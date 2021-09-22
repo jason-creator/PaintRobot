@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- launch joint state controller -->
+  <!-- <rosparam file="$(find ppr_control)/config/joint_state_controller.yaml" command="load"/>
+  <rosparam file="$(find ppr_control)/config/base_controller.yaml" command="load"/>
+  <rosparam file="$(find ppr_control)/config/arm_controllers_ur5.yaml" command="load"/>
+  <rosparam file="$(find ppr_control)/config/controllers_sim.yaml" command="load"/> -->
+
+  <!-- spawn controller by differ namespace -->
+
+  <!-- <node name="ppr_controllers_spawner" pkg="controller_manager" type="spawner" output="screen" respawn="false" ns="/parabot" args=" 
+              joint_state_controller              
+              joint1_position_controller 
+              joint2_position_controller 
+              joint3_position_controller
+              " />
+  <node name="base_controllers_spawner" pkg="controller_manager" type="spawner" output="screen" respawn="false" ns="/gtrobot_base" args=" 
+              base_wheels_controller
+              base_controller_rotate_axis
+              base_controller_x_axis
+              base_controller_y_axis
+  "/>
+  <node name="arm_controllers_spawner" pkg="controller_manager" type="spawner" output="screen" respawn="false" ns="/gtrobot_arm" args=" 
+              joint_state_controller
+              arm_group_controller
+  "/>-->
+  <arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface" />
+  <!-- <arg name="paused" default="false"/>  -->
+
+  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+  <!-- startup simulated world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <!-- <arg name="paused" value="$(arg paused)"/> -->
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="recording" value="false"/>
+    <arg name="debug" value="false"/>
+    <arg name="verbose" value="true"/>
+  </include>
+
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find ppr_description)/urdf/gtrobot.urdf.xacro' transmission_hw_interface:=$(arg transmission_hw_interface)" />
+
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="50.0" />
+  </node>
+
+  <node name="parabot_simulator" pkg="gazebo_ros" type="spawn_model" output="screen" respawn="false" args="-sdf -database poineer -model poineer -x 0 -y 0 -z 0 -R 0 -P 0 -Y 0" />
+
+
+</launch>
